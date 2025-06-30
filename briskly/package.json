@@ -12,15 +12,18 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.32.0",
     "@clerk/express": "^1.7.2",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.10.1",
     "@tailwindcss/vite": "^4.1.11",
     "cons": "^0.0.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
     "express": "^5.1.0",
     "multer": "^2.0.1",
     "pdf-parse": "^1.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-dropzone": "^14.3.8",
     "react-router-dom": "^7.6.3",
     "tailwind-merge": "^3.3.1",
     "tw-animate-css": "^1.3.4"
