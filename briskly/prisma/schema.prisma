@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
- // output   = "../app/generated/prisma"
+  // output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -15,13 +15,28 @@ datasource db {
 }
 
 model User {
-  id      Int     @id @default(autoincrement())
-  clerkId String  @unique
-  name    String
-  email   String  @unique
-  chats   Chat[]
-  quizes  Quize[]
-  notes   Note[]
+  id         Int             @id @default(autoincrement())
+  clerkId    String          @unique
+  name       String
+  email      String          @unique
+  preference UserPreference?
+  chats      Chat[]
+  quizes     Quize[]
+  notes      Note[]
+}
+
+model UserPreference {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  gender           String?
+  educationStatus  String?
+  explanationStyle String?
+  comfortLanguage  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Chat {
