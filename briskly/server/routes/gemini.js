@@ -1,24 +1,42 @@
 import express from "express"
 import {GoogleGenerativeAI} from "@google/generative-ai"
 import dotenv from "dotenv"
-import { PrismaClient } from "@prisma/client"
+import fs from 'fs'
+import path from "path"
 
+
+const router = express.Router()
 dotenv.config();
-
-
-
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
 
+router.post('/', async (req,res) => {
 
+    const model = genAi.getGenerativeModel({model: 'gemini-2.0-flash-lite'});
+    const {parsedFileName} = req.body // add "question" in field later
+    const parsedFilePath = path.join('C:/BRISKLY/briskly/server/uploads', parsedFileName)
+    
+    try{
+        const parseText = fs.readFileSync(parsedFilePath, 'utf-8');
 
-async function Ai(){
-    const model = genAi.getGenerativeModel({model:'gemini-2.0-flash-lite'});
-    const promt = "Hello gemini whats going on it's been a while since i talk to you";
-    const result = await model.generateContent([{text: promt}]);
+        const promt = `Read the content from the file and give answer in points file:${parseText}`
+        const result = await model.generateContent([
+            {text: promt}
+        ])
 
-    const aiContent = result.response.text();
+        const ans = result.response.text();
 
-    console.log(aiContent);
-};
+        console.log(ans)
+        res.json({ answer: ans });
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({ error: 'Failed to process Gemini request' })
+    } 
+    finally{
+        fs.unlinkSync(parsedFilePath);
+    }
 
-Ai();
+})
+
+export default router;
+
