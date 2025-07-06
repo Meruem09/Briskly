@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
@@ -10,6 +11,36 @@ const Onboarding = () => {
     explanation: "",
     language: "",
   });
+  const genderMap = {
+  "Male ♂️": "male",
+  "Female ♀️": "female",
+  "mental illness 🏳️‍🌈": "others"
+};
+const educationMap = {
+  "School 🎒": "school",
+  "College 🎓": "college"
+};
+const explanationMap = {
+  "Simple": "simple",
+  "Detailed": "detailed",
+  "Fast-paced": "fast_paced"
+};
+const languageMap = {
+  "English": "english",
+  "Hindi": "hindi",
+  "Gujrati": "gujrati",
+  "Bengali": "bengali",
+  "Others": "others"
+};
+
+const mappedFormData = {
+  ...formData,
+  gender: genderMap[formData.gender],
+  educationStatus: educationMap[formData.educationStatus],
+  explanation: explanationMap[formData.explanation],
+  language: languageMap[formData.language]
+};
+  const {getToken} = useAuth();
 
   const navigate_to = useNavigate();
   
@@ -21,13 +52,28 @@ const Onboarding = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 4) {
       setStep((prev) => prev + 1);
     } else {
-      console.log("Onboarding Complete:", formData);
-      handleMain();
-      // Redirect or save to DB
+      try{
+        const token = await getToken();
+        const res = await fetch("http://localhost:3000/userPref", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`},
+          body: JSON.stringify(mappedFormData),
+          credentials: "include"
+        })
+        const data = await res.json();
+        if(data.success){
+          navigate_to('/main');
+        }
+        else{
+          alert("Failed to save preferences: " + data.error);
+        }
+      }catch(err){
+        console.log(err);
+      }
     }
   };
 
@@ -52,7 +98,7 @@ const Onboarding = () => {
             <div>
               <label className="block text-sm font-medium mb-2">Gender</label>
               <div className="flex space-x-3">
-                {["Male ♂️", "Female ♀️", "prefer not to say"].map((option) => (
+                {["Male ♂️", "Female ♀️", "mental illness 🏳️‍🌈"].map((option) => (
                   <label
                     key={option}
                     className={`flex-1 py-2 text-center text-sm rounded-lg border cursor-pointer transition-colors ${
@@ -114,7 +160,6 @@ const Onboarding = () => {
               className="w-full px-4 py-2 bg-gray-950 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select one</option>
-              <option value="Visual">Visual (diagrams, charts)</option>
               <option value="Simple">Simple & Easy</option>
               <option value="Detailed">In-depth & Detailed</option>
               <option value="Fast-paced">Quick Summary</option>
@@ -133,10 +178,10 @@ const Onboarding = () => {
               <option value="">Select a language</option>
               <option value="English">English</option>
               <option value="Hindi">Hindi</option>
-              <option value="Tamil">Tamil</option>
-              <option value="Bengali">Bengali</option>
-              <option value="Telugu">Telugu</option>
-              <option value="Kannada">Kannada</option>
+              <option value="Gujrati">Gujrati</option>
+              <option value="Bengali">Bengali</option>              <option value="Bengali">Bengali</option>
+              <option value="Others">Others</option>
+
             </select>
           </div>
         )}

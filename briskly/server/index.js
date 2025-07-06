@@ -24,6 +24,10 @@ app.use('/upload', uploadRoutes); // add middleware requireAuth later
 import geminiRoutes from './routes/gemini.js';
 app.use('/gemini', geminiRoutes); // add middleware requireAuth later
 
+import userPrefRoutes from './routes/userPref.js';
+app.use('/userPref', requireAuth(), userPrefRoutes); // add middleware requireAuth later
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

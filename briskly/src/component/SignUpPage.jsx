@@ -161,7 +161,7 @@ const handleVerify = async () => {
       
 
       alert("Signup successful!");
-      navigate_to('/main')
+      navigate_to('/onBoard')
     } else {
       console.error("Verification incomplete:", result);
       alert("Verification incomplete. Please try again.");

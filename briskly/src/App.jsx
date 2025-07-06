@@ -4,7 +4,7 @@ import './App.css'
 import SignUpPage from './component/SignUpPage'
 import SignInPage from './component/SIgnInPage';
 import Main from './component/Main';
-
+import Onboarding from './component/OnBoarding';
 function App() {
 
   return (
@@ -14,6 +14,7 @@ function App() {
         <Route path="/" element={<SignUpPage/>} />
         <Route path="/signIn" element={<SignInPage/>} />
         <Route path="/main" element={<Main/>} />
+        <Route path="/onBoard" element={<Onboarding/>} />
       </Routes>
     </Router>
     </>
