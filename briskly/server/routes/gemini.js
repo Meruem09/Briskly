@@ -11,19 +11,31 @@ dotenv.config();
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
 
 router.post('/', async (req,res) => {
-    const { clerkId } =  req.body;
+    const { clerkId, parsedFileName } =  req.body;
     const userPref = await prisma.userPreference.findUnique({
         where: { userClerkId: clerkId}
     })
     const model = genAi.getGenerativeModel({model: 'gemini-2.0-flash-lite'});
-    // const {parsedFileName} = req.body // add "question" in field later
-    // const parsedFilePath = path.join('C:/BRISKLY/briskly/server/uploads', parsedFileName)
+    let parseText = "";
+    let parsedFilePath = "";
+    if(parsedFileName){
+        parsedFilePath = path.join('C:/BRISKLY/briskly/server/uploads', parsedFileName)
+        try{
+            parseText = fs.readFileSync(parsedFilePath, 'utf-8');
+        }catch(err){
+            return res.status(400).json({
+                error: "file not found or unreadable"
+            })
+        }
+    }
     
     try{
-        // const parseText = fs.readFileSync(parsedFilePath, 'utf-8');
-        const userInfo = `name: ${userPref.name}, gender: ${userPref.gender}, education_status:${userPref.educationStatus}, preferred_explanation_style:${userPref.explanationStyle}, comfortable_language:${userPref.comfortLanguage}`
-        // const promt = `${userInfo} Read the content from the file and give answer in points file:${parseText}`
-        const promt = `${userInfo} tell me something good about me`
+        const userInfo = `name: ${userPref.name}, gender: ${userPref.gender}, education_status:${userPref.educationStatus}, preferred_explanation_style:${userPref.explanationStyle}, comfortable_language:${userPref.comfortLanguage}. this is user info use only this to make the interaction more personalized.`
+        let promt = `${userInfo}, Promt: tell me something good about me,`
+
+        if(parseText){
+            promt += `read this text and give answer. text:${parseText}`;
+        }
         const result = await model.generateContent([
             {text: promt}
         ])
@@ -44,4 +56,5 @@ router.post('/', async (req,res) => {
 })
 
 export default router;
+
 

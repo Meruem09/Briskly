@@ -10,7 +10,7 @@ const router = express.Router();
 
 // Initialize upload
 const upload = multer({
-  dest: 'C:/BRISKLY/briskly/uploads',
+  dest: 'C:/BRISKLY/briskly/server/uploads',
   limits: { fileSize: 5000000 } // Limit file size to 5MB
 });
 
