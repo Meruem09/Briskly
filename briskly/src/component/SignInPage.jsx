@@ -34,7 +34,7 @@ const SignInPage = () => {
         if(result.status === "complete"){
             await setActive({ session: result.createdSessionId });
             alert('Sign In Successfully')
-            navigate('/onBoard');
+            navigate('/main');
         }
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));

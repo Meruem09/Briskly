@@ -22,11 +22,20 @@ import uploadRoutes from './routes/upload.js';
 app.use('/upload', uploadRoutes); // add middleware requireAuth later
 
 import geminiRoutes from './routes/gemini.js';
-app.use('/gemini', geminiRoutes); // add middleware requireAuth later
+app.use('/gemini',requireAuth(), geminiRoutes); // add middleware requireAuth later
+
+import chatRoutes from './routes/chats.js';
+app.use('/chats',requireAuth(), chatRoutes); // add middleware requireAuth later
+
+import messageRoutes from './routes/messages.js';
+app.use('/messages',requireAuth(), messageRoutes); // add middleware requireAuth later
 
 import userPrefRoutes from './routes/userPref.js';
 app.use('/userPref', requireAuth(), userPrefRoutes); // add middleware requireAuth later
 
+app.get('/', (req, res) => {
+  res.json({ message: "API server running" });
+});
 
 
 app.listen(PORT, () => {

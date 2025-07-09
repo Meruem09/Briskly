@@ -10,51 +10,74 @@ const router = express.Router()
 dotenv.config();
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
 
-router.post('/', async (req,res) => {
-    const { clerkId, parsedFileName } =  req.body;
+router.post('/', async (req, res) => {
+  try {
+    const { chatId, prompt, parsedFileName } = req.body;
+
+    // If you have Clerk JWT middleware, get clerkId from auth
+    // Or add your own decode here
+    const clerkId = req.auth?.userId;
+    if (!clerkId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    await prisma.message.create({
+      data: {
+        chatId: parseInt(chatId),
+        sender: 'user',
+        content: prompt,
+      },
+    });
+
+
     const userPref = await prisma.userPreference.findUnique({
-        where: { userClerkId: clerkId}
-    })
-    const model = genAi.getGenerativeModel({model: 'gemini-2.0-flash-lite'});
+      where: { userClerkId: clerkId }
+    });
+
+    const model = genAi.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+
     let parseText = "";
     let parsedFilePath = "";
-    if(parsedFileName){
-        parsedFilePath = path.join('C:/BRISKLY/briskly/server/uploads', parsedFileName)
-        try{
-            parseText = fs.readFileSync(parsedFilePath, 'utf-8');
-        }catch(err){
-            return res.status(400).json({
-                error: "file not found or unreadable"
-            })
-        }
-    }
-    
-    try{
-        const userInfo = `name: ${userPref.name}, gender: ${userPref.gender}, education_status:${userPref.educationStatus}, preferred_explanation_style:${userPref.explanationStyle}, comfortable_language:${userPref.comfortLanguage}. this is user info use only this to make the interaction more personalized.`
-        let promt = `${userInfo}, Promt: tell me something good about me,`
 
-        if(parseText){
-            promt += `read this text and give answer. text:${parseText}`;
-        }
-        const result = await model.generateContent([
-            {text: promt}
-        ])
-
-        const ans = result.response.text();
-
-        console.log(ans)
-        res.json({ answer: ans });
-    }
-    catch(err){
-        console.log(err);
-        res.status(500).json({ error: 'Failed to process Gemini request' })
-    } 
-    finally{
-        fs.unlinkSync(parsedFilePath);
+    if (parsedFileName) {
+      parsedFilePath = path.join('C:/BRISKLY/briskly/server/uploads', parsedFileName);
+      if (fs.existsSync(parsedFilePath)) {
+        parseText = fs.readFileSync(parsedFilePath, 'utf-8');
+      } else {
+        return res.status(400).json({ error: "File not found or unreadable" });
+      }
     }
 
-})
+    const userInfo = `name: ${userPref.name}, gender: ${userPref.gender}, education_status: ${userPref.educationStatus}, preferred_explanation_style: ${userPref.explanationStyle}, comfortable_language: ${userPref.comfortLanguage}. Use this info to personalize.`;
 
+    let finalPrompt = `${userInfo} Prompt: ${prompt}`;
+
+    if (parseText) {
+      finalPrompt += `\nAlso, read this text: ${parseText}`;
+    }
+
+    const result = await model.generateContent([{ text: finalPrompt }]);
+    const ans = result.response.text();
+
+    console.log('Gemini answer:', ans);
+
+    res.json({ answer: ans });
+
+    if (parsedFilePath && fs.existsSync(parsedFilePath)) {
+      fs.unlinkSync(parsedFilePath);
+    }
+
+    await prisma.message.create({
+      data: {
+        chatId: parseInt(chatId),
+        sender: 'ai',
+        content: ans,
+      },
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to process Gemini request' });
+  }
+});
 export default router;
-
-

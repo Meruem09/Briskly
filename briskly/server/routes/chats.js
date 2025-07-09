@@ -1,6 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import findOrCreateUser from '../utils/middleware';
+import findOrCreateUser from '../utils/middleware.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -28,5 +28,36 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to create chat' });
   }
 });
+
+
+router.get('/getChat', async (req, res) => {
+  const { userId } = req.auth; // or however you extract Clerk ID
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Get the DB user by Clerk ID
+  const user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const chats = await prisma.chat.findMany({
+    where: { userId: user.id },
+    orderBy: { startedAt: 'desc' },
+    include: {
+      messages: {
+        orderBy: { sentAt: 'asc' }
+      },
+    },
+  });
+
+  res.json(chats);
+});
+
 
 export default router;
