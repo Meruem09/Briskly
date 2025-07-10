@@ -1,0 +1,25 @@
+import expresss from "express";
+import { PrismaClient } from "@prisma/client";
+import { requireAuth } from "@clerk/express";
+
+const prisma = new PrismaClient();
+const router = expresss.Router();
+
+router.post('/', requireAuth, async(req, res) => {
+    try{
+        const {name, gender, educationStatus, explanation, language} = req.body;
+        const {userId} = req.auth;
+
+        const userPref = await prisma.userPreference.upsert({
+            where: {userId},
+            update: { name, gender, educationStatus, explainationStyle: explanation, comfortLanguage: language},
+            create: {name, gender, educationStatus, explainationStyle: explanation, comfortLanguage: language}
+        })
+        res.status(200).json({ success: true, data: userPref});
+    }catch(err){
+        console.error(err);
+        res.status(500).json({ success: false, error: err.message});  
+    }
+})
+
+export default router;
