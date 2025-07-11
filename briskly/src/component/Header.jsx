@@ -1,9 +1,16 @@
+import { Library } from 'lucide-react';
+
+
+
 const Header = () => {
     return ( 
         <header className="w-full bg-[#121212] shadow-md py-3 px-6 flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center space-x-2 text-xl font-bold text-blue-400">
-                <img src="/vite.svg" alt="briskly logo" className="h-8 w-8" />
+                <div><Library
+                className='h-8 w-8 text-white'
+                
+                /></div>
                 <span>briskly</span>
             </div>
 

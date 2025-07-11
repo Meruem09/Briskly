@@ -86,19 +86,8 @@ const SignUpPage = () => {
     // console.log("Creating user in database with:", { clerkId, userData })
     // console.log(token)
 
-    const response = await fetch("http://localhost:3000/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        clerkId,
-        username: userData.username.trim(),
-        email: userData.email.trim(),
-      }),
-      credentials: 'include', 
-    })
+    
+    
 
     //remove below line at time of deploy.
     console.log("Database response status:", response.status)

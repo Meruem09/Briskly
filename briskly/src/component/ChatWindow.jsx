@@ -264,7 +264,7 @@ const isDisabled = !chatId || !prompt.trim();
   return (
     <div>
       <div className="max-w-2xl  mx-auto mt-10 p-1 shadow-lg h-[80vh] flex flex-col">        
-        <div className="flex-1 overflow-y-scroll scrollbar-thin scrollbar-thumb-pink-900 scrollbar-track-red-900 h-64 p-2 overflow-y-auto space-y-4 mb-4">
+        <div className="flex-1 overflow-auto custom-scrollbar h-64 p-2  space-y-4 mb-4">
           {messages.map((msg, idx) => (
             <div
               key={idx}
