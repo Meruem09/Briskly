@@ -11,7 +11,7 @@ const SignInPage = () => {
   const {signOut} = useClerk()
 
   const handleSignUp = () => {
-    navigate('/');
+    navigate('/signUp');
   }
 
   if(!isLoaded){
@@ -42,54 +42,81 @@ const SignInPage = () => {
     }
 }
 
+  const handleOAuth = async (provider) => {
+    try {
+      await signOut()
+
+      // Use environment-based redirect URLs or fallback to current origin
+      const baseUrl = window.location.origin
+
+      await signIn.authenticateWithRedirect({
+        strategy: provider,
+        redirectUrl: `${baseUrl}/sso-callback`,
+        redirectUrlComplete: `${baseUrl}/board`,
+      })
+    } catch (err) {
+      console.error("OAuth error:", err)
+      alert(err.errors?.[0]?.message || "OAuth authentication failed.")
+    }
+  }
+
 
 
 return ( 
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <div className="w-full max-w-md bg-gray-900 p-8 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
+  <div className="bg-[url('/bg2.svg')] bg-no-repeat bg-cover" >
+    <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-4">
+      <div className="w-full max-w-md bg-[#121212] p-8 rounded-2xl shadow-lg">
+        <h2 className="text-2xl font-bold mb-1">Welcome Back 👋</h2>
+        <br />
 
         <form onSubmit={handleSignIn} className="space-y-4">
           <div>
-            <label className="block text-sm mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">Email address</label>
             <input
               type="email"
+              placeholder="username@gmail.com"
               value={emailAddress}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
+              className="w-full px-4 py-2 bg-gray-950 text-white rounded-lg border border-gray-600 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
+              placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-              minLength={8}
+              className="w-full px-4 py-2 bg-gray-950 text-white rounded-lg border border-gray-600 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
+          {error && (
+            <div className="text-red-500 text-sm mt-2">{error}</div>
+          )}
+
           <button
             type="submit"
-            className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 rounded transition-colors"
+            onSubmit={handleSignIn}
+            className="w-full mt-4 bg-gray-950 hover:bg-blue-900 border border-gray-600 transition-colors text-white font-semibold py-2 rounded-lg"
           >
-            Sign In
+            Sign In →
           </button>
-          <div className="mt-6 text-center text-sm text-gray-400">
-          Don't have an account?{" "}
-            <button
-              onClick={handleSignUp}
-              className="text-blue-400 hover:underline cursor-pointer"
-            >
-              Sign Up
-            </button>
-          </div>        
         </form>
+
+        <div className="mt-6 text-center text-sm text-gray-400">Or sign in with</div>
+        <div className="flex space-x-3 mt-4">
+          <button onClick={() => handleOAuth("oauth_github")} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-white">GitHub</button>
+          <button onClick={() => handleOAuth("oauth_google")} className="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded-lg text-white">Google</button>
+        </div>
+
+        <div className="mt-6 text-center text-sm text-gray-400">
+          Don’t have an account? <a onClick={handleSignUp} className="text-blue-400 cursor-pointer hover:underline">Sign Up</a>
+        </div>
       </div>
     </div>
+  </div>
     );
 }
  

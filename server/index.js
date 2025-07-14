@@ -33,6 +33,11 @@ app.use('/messages',requireAuth(), messageRoutes); // add middleware requireAuth
 import userPrefRoutes from './routes/userPref.js';
 app.use('/userPref', requireAuth(), userPrefRoutes); // add middleware requireAuth later
 
+import GQUizzesRoutes from './routes/GQuizzes.js';
+app.use('/GQuizzes',  GQUizzesRoutes); // add middleware requireAuth later
+
+
+
 app.get('/', (req, res) => {
   res.json({ message: "API server running" });
 });

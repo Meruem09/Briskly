@@ -38,3 +38,23 @@ html, body {
 .custom-scrollbar::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and other WebKit browsers */
 }
+
+
+/* src/styles/custom.css */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text {
+  background-size: 200% 100%;
+  animation: gradient 5s ease infinite;
+}
+

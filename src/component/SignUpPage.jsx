@@ -190,7 +190,8 @@ const handleVerify = async () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
+    
+    <div className="min-h-screen flex items-center justify-center bg-[url('/bg2.svg')] bg-no-repeat bg-cover text-white">
       <div className="w-full max-w-md bg-[#121212] p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold mb-1">Welcome to IntellectUP</h2>
         <br />

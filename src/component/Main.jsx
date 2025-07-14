@@ -30,7 +30,7 @@ const Main = () => {
           <ChatWindow />
         </div>
         <div className="h-full">
-          <div className="bg-black text-white flex flex-col h-full">
+          <div className=" text-white flex flex-col h-full">
             <div className="flex space-x-6 border-b border-gray-700 px-6 py-4">
               {tabs.map((tab) => (
                 <button
@@ -44,7 +44,7 @@ const Main = () => {
                 </button>
               ))}
             </div>
-            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar ">
               {tabs.find((tab) => tab.name === activeTab)?.Component}
             </div>
           </div>
