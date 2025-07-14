@@ -17,6 +17,7 @@ const Main = () => {
 
   return (
     <>
+    <div className="bg-[url('/bg3.svg')] bg-no-repeat bg-cover">
       <Header />
       <Split
         className="flex h-[calc(100vh-64px)]" // Adjust height to account for Header
@@ -26,10 +27,10 @@ const Main = () => {
         gutterSize={2}
         direction="horizontal"
       >
-        <div className="h-full">
+        <div className="h-full bg-transparent">
           <ChatWindow />
         </div>
-        <div className="h-full">
+        <div className="h-full bg-transparent ">
           <div className=" text-white flex flex-col h-full">
             <div className="flex space-x-6 border-b border-gray-700 px-6 py-4">
               {tabs.map((tab) => (
@@ -50,6 +51,7 @@ const Main = () => {
           </div>
         </div>
       </Split>
+    </div>
     </>
   );
 };

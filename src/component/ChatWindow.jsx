@@ -158,7 +158,7 @@ export default function ChatWindow() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto mt-10 p-4 bg-gray-950 rounded-2xl shadow-lg h-[80vh] flex items-center justify-center">
+      <div className="max-w-2xl mx-auto mt-10 p-4 bg-transparent rounded-2xl shadow-lg h-[80vh] flex items-center justify-center">
         <div className="text-white">Loading chat...</div>
       </div>
     );
@@ -166,7 +166,7 @@ export default function ChatWindow() {
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto mt-10 p-4 bg-gray-950 rounded-2xl shadow-lg h-[80vh] flex items-center justify-center">
+      <div className="max-w-2xl mx-auto mt-10 p-4 bg-transparent rounded-2xl shadow-lg h-[80vh] flex items-center justify-center">
         <div className="text-red-500">
           <p>Error: {error}</p>
           <button onClick={() => window.location.reload()} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl">
@@ -201,15 +201,15 @@ export default function ChatWindow() {
           disabled={!chatId}
         />
         <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-        <button onClick={handleAttachClick} className="text-white text-2xl py-2 rounded-xl">
+        <button onClick={handleAttachClick} className="text-gray-300 cursor-pointer text-2xl py-2 rounded-xl hover:text-white">
           <IoMdAttach />
         </button>
         <button
           onClick={handleSend}
           disabled={!chatId || !prompt.trim()}
-          className="text-white text-2xl px-3 py-2 rounded-xl disabled:opacity-50"
+          className="text-gray-300 hover:text-white text-2xl px-3 py-2 rounded-xl cursor-pointer disabled:opacity-50"
         >
-          <LuSendHorizontal className={!chatId || !prompt.trim() ? 'text-white' : 'text-blue-500'} />
+          <LuSendHorizontal className={!chatId || !prompt.trim() ? 'text-gray-300' : 'text-blue-500'} />
         </button>
       </div>
     </div>

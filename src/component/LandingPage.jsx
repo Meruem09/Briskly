@@ -1,16 +1,30 @@
 import Header from "./Header";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Button from "./compo/Button";
 import { useNavigate } from "react-router-dom";
+import {useAuth} from '@clerk/clerk-react'
 
 gsap.registerPlugin();
 
 const LandingPage = () => {
   const wordRef = useRef(null);
+  const {isSignedIn} = useAuth();
+
   const words = ["Faster", "Smarter", "Effortlessly"];
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(isSignedIn){
+      navigate('/main')
+    }
+  }, [])
+
+
+
+
+
   useGSAP(() => {
     let index = 0;
 
