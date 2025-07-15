@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
 import { LuSendHorizontal } from 'react-icons/lu';
 import { IoMdAttach } from 'react-icons/io';
-import ReactMarkdown from 'react-markdown';
+import  ReactMarkdown  from 'react-markdown';
 
 export default function ChatWindow() {
   const { getToken } = useAuth();
@@ -15,7 +15,7 @@ export default function ChatWindow() {
   const [isTyping, setIsTyping] = useState(false);
   const [uploadedParsedFileName, setUploadedParsedFileName] = useState('');
   const fileInputRef = useRef(null);
-  const containerRef = useRef(null)
+  const containerRef = useRef(null);
 
   // Load or create chat on mount
   useEffect(() => {
@@ -23,6 +23,10 @@ export default function ChatWindow() {
       setLoading(true);
       try {
         const token = await getToken();
+        if (!token) {
+          throw new Error('Authentication token not found');
+        }
+
         // Check if chatId exists in localStorage
         const storedChatId = localStorage.getItem('chatId');
 
@@ -34,13 +38,16 @@ export default function ChatWindow() {
           // Fetch existing chats
           const res = await axios.get(`${import.meta.env.VITE_APP_BE_BASEURL}/chats/getChat`, {
             headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
           });
 
-          if (!Array.isArray(res.data)) {
-            throw new Error('Invalid chats response');
+          // Validate response data
+          const chats = Array.isArray(res.data) ? res.data : res.data?.chats || [];
+          if (!Array.isArray(chats)) {
+            throw new Error('Invalid chats response: Expected an array');
           }
 
-          const sortedChats = res.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+          const sortedChats = chats.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
           if (sortedChats.length > 0) {
             // Use the most recent chat
@@ -49,7 +56,7 @@ export default function ChatWindow() {
             await loadMessages(sortedChats[0].id, token);
           } else {
             // Create new chat
-            const res = await axios.post(
+            const newChatRes = await axios.post(
               `${import.meta.env.VITE_APP_BE_BASEURL}/chats`,
               {},
               {
@@ -60,44 +67,62 @@ export default function ChatWindow() {
                 withCredentials: true,
               }
             );
-            setChatId(res.data.id);
-            localStorage.setItem('chatId', res.data.id);
+
+            if (!newChatRes.data?.id) {
+              throw new Error('Failed to create new chat: No ID returned');
+            }
+
+            setChatId(newChatRes.data.id);
+            localStorage.setItem('chatId', newChatRes.data.id);
             setMessages([]);
           }
         }
       } catch (err) {
-        console.error('Error initializing chat:', err);
-        setError(err.message);
+        console.error('Error initializing chat:', {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+          config: err.config,
+        });
+        setError(`Failed to initialize chat: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     initializeChat();
-  }, []);
+  }, [getToken]);
 
-
-useEffect(() => {
+  // Scroll to bottom when messages change
+  useEffect(() => {
     const container = containerRef.current;
     if (container) {
       container.scrollTo({
         top: container.scrollHeight,
-        behavior: 'smooth', // or 'auto' if you want instant scroll
+        behavior: 'smooth',
       });
     }
-  }, [messages]); // whenever messages change
-
+  }, [messages]);
 
   const loadMessages = async (id, token) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_APP_BE_BASEURL}/messages/${id}`, {  
+      const response = await axios.get(`${import.meta.env.VITE_APP_BE_BASEURL}/messages/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
+
+      if (!Array.isArray(response.data)) {
+        throw new Error('Invalid messages response: Expected an array');
+      }
+
       setMessages(response.data);
     } catch (err) {
-      console.error('Failed to load messages:', err);
-      setError('Failed to load messages');
+      console.error('Failed to load messages:', {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
+      setError(`Failed to load messages: ${err.message}`);
     }
   };
 
@@ -111,6 +136,10 @@ useEffect(() => {
     try {
       setIsTyping(true);
       const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
       const res = await axios.post(
         `${import.meta.env.VITE_APP_BE_BASEURL}/gemini`,
         {
@@ -127,14 +156,23 @@ useEffect(() => {
       if (!res.data?.answer) {
         throw new Error('No answer received from server');
       }
-      setIsTyping(false);
+
       const aiMessage = { sender: 'ai', content: res.data.answer };
       setMessages((prev) => [...prev, aiMessage]);
       setUploadedParsedFileName('');
     } catch (err) {
-      console.error('Failed to send message:', err);
-      setMessages((prev) => [...prev, { sender: 'ai', content: 'Sorry, I encountered an error. Please try again.' }]);
-      setError(err.message);
+      console.error('Failed to send message:', {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'ai', content: 'Sorry, I encountered an error. Please try again.' },
+      ]);
+      setError(`Failed to send message: ${err.message}`);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -155,16 +193,31 @@ useEffect(() => {
 
     try {
       const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+
       const res = await axios.post(`${import.meta.env.VITE_APP_BE_BASEURL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       });
+
+      if (!res.data?.parsedFileName) {
+        throw new Error('No parsed file name returned from server');
+      }
+
       setUploadedParsedFileName(res.data.parsedFileName);
+      fileInputRef.current.value = ''; // Clear file input
     } catch (err) {
-      console.error('Error uploading file:', err);
-      setError('Failed to upload file');
+      console.error('Error uploading file:', {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
+      setError(`Failed to upload file: ${err.message}`);
     }
   };
 
@@ -185,7 +238,10 @@ useEffect(() => {
       <div className="max-w-2xl mx-auto mt-10 p-4 bg-transparent rounded-2xl shadow-lg h-[80vh] flex items-center justify-center">
         <div className="text-red-500">
           <p>Error: {error}</p>
-          <button onClick={() => window.location.reload()} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl">
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl"
+          >
             Retry
           </button>
         </div>
@@ -196,7 +252,6 @@ useEffect(() => {
   return (
     <div className="max-w-2xl mx-auto mt-10 p-1 shadow-lg h-[80vh] flex flex-col">
       <div className="flex-1 overflow-auto custom-scrollbar p-2 space-y-4 mb-4" ref={containerRef}>
-
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -204,27 +259,20 @@ useEffect(() => {
               msg.sender === 'user' ? 'bg-blue-500 text-white ml-auto max-w-xs' : 'bg-gray-600 text-white max-w-[80%]'
             }`}
           >
-            {msg.sender === 'ai' ? (
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-                ) : (
-                  msg.content
-            )}          
+            {msg.sender === 'ai' ? <ReactMarkdown>{msg.content}</ReactMarkdown> : msg.content}
           </div>
-            ))}
+        ))}
       </div>
       {isTyping && (
-        <div className="p-2 rounded-xl  text-white animate-pulse">
+        <div className="p-2 rounded-xl text-white animate-pulse">
           Typing<span className="dot-flash">...</span>
         </div>
       )}
-      { uploadedParsedFileName && (
-        <div className="p-2 text-center rounded-xl  text-blue-500 ">
-          File Uploaded 🎉
+      {uploadedParsedFileName && (
+        <div className="p-2 text-center rounded-xl text-blue-500">
+          File Uploaded 🎉: {uploadedParsedFileName}
         </div>
-      )
-
-      }
-
+      )}
       <div className="flex gap-2 p-2 border border-blue-500 rounded-3xl">
         <input
           value={prompt}
@@ -235,7 +283,10 @@ useEffect(() => {
           disabled={!chatId}
         />
         <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-        <button onClick={handleAttachClick} className="text-gray-300 cursor-pointer text-2xl py-2 rounded-xl hover:text-white">
+        <button
+          onClick={handleAttachClick}
+          className="text-gray-300 cursor-pointer text-2xl py-2 rounded-xl hover:text-white"
+        >
           <IoMdAttach />
         </button>
         <button

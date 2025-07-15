@@ -15,11 +15,6 @@ const LandingPage = () => {
   const words = ["Faster", "Smarter", "Effortlessly"];
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if(isSignedIn){
-      navigate('/main')
-    }
-  }, [])
 
   useGSAP(() => {
     let index = 0;

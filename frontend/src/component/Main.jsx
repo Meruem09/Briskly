@@ -20,13 +20,13 @@ const Main = () => {
   const {user, isLoaded } = useUser();
   const [activeTab, setActiveTab] = useState("Quizzes");
   const {isSignedIn} = useAuth();
-  const navigate = useNavigate()
+const navigate = useNavigate();
 
-  useEffect(() => {
-      if (!isSignedIn) {
-    navigate('/signUp')
+useEffect(() => {
+  if (isLoaded && !isSignedIn) {
+    navigate('/signUp');
   }
-  }, [])
+}, [isLoaded, isSignedIn, navigate]);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
