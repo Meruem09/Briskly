@@ -97,5 +97,6 @@ model Note {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  content String?
   startedAt DateTime @default(now())
 }

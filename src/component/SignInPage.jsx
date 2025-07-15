@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useSignIn, useClerk } from "@clerk/clerk-react";
 import { useState } from "react";
+
 const SignInPage = () => {
 
   const {isLoaded, signIn, setActive} = useSignIn();
@@ -18,7 +19,7 @@ const SignInPage = () => {
     return null;
   }
 
-
+  localStorage.clear()
   async function handleSignIn(e){
     signOut();
     e.preventDefault();
@@ -42,30 +43,11 @@ const SignInPage = () => {
     }
 }
 
-  const handleOAuth = async (provider) => {
-    try {
-      await signOut()
-
-      // Use environment-based redirect URLs or fallback to current origin
-      const baseUrl = window.location.origin
-
-      await signIn.authenticateWithRedirect({
-        strategy: provider,
-        redirectUrl: `${baseUrl}/sso-callback`,
-        redirectUrlComplete: `${baseUrl}/board`,
-      })
-    } catch (err) {
-      console.error("OAuth error:", err)
-      alert(err.errors?.[0]?.message || "OAuth authentication failed.")
-    }
-  }
-
-
 
 return ( 
   <div className="bg-[url('/bg2.svg')] bg-no-repeat bg-cover" >
-    <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-4">
-      <div className="w-full max-w-md bg-[#121212] p-8 rounded-2xl shadow-lg">
+    <div className="min-h-screen flex  items-center justify-center bg-transparent text-white px-4">
+      <div className="w-full max-w-md bg-black/40 backdrop-blur-lg p-8 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold mb-1">Welcome Back 👋</h2>
         <br />
 
@@ -104,12 +86,6 @@ return (
             Sign In →
           </button>
         </form>
-
-        <div className="mt-6 text-center text-sm text-gray-400">Or sign in with</div>
-        <div className="flex space-x-3 mt-4">
-          <button onClick={() => handleOAuth("oauth_github")} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg text-white">GitHub</button>
-          <button onClick={() => handleOAuth("oauth_google")} className="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded-lg text-white">Google</button>
-        </div>
 
         <div className="mt-6 text-center text-sm text-gray-400">
           Don’t have an account? <a onClick={handleSignUp} className="text-blue-400 cursor-pointer hover:underline">Sign Up</a>

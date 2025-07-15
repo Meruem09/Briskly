@@ -3,6 +3,7 @@ import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
 import { LuSendHorizontal } from 'react-icons/lu';
 import { IoMdAttach } from 'react-icons/io';
+import ReactMarkdown from 'react-markdown';
 
 export default function ChatWindow() {
   const { getToken } = useAuth();
@@ -11,8 +12,10 @@ export default function ChatWindow() {
   const [chatId, setChatId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
   const [uploadedParsedFileName, setUploadedParsedFileName] = useState('');
   const fileInputRef = useRef(null);
+  const containerRef = useRef(null)
 
   // Load or create chat on mount
   useEffect(() => {
@@ -73,6 +76,18 @@ export default function ChatWindow() {
     initializeChat();
   }, []);
 
+
+useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth', // or 'auto' if you want instant scroll
+      });
+    }
+  }, [messages]); // whenever messages change
+
+
   const loadMessages = async (id, token) => {
     try {
       const response = await axios.get(`http://localhost:3000/messages/${id}`, {
@@ -94,6 +109,7 @@ export default function ChatWindow() {
     setPrompt('');
 
     try {
+      setIsTyping(true);
       const token = await getToken();
       const res = await axios.post(
         'http://localhost:3000/gemini',
@@ -111,7 +127,7 @@ export default function ChatWindow() {
       if (!res.data?.answer) {
         throw new Error('No answer received from server');
       }
-
+      setIsTyping(false);
       const aiMessage = { sender: 'ai', content: res.data.answer };
       setMessages((prev) => [...prev, aiMessage]);
       setUploadedParsedFileName('');
@@ -179,19 +195,37 @@ export default function ChatWindow() {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-1 shadow-lg h-[80vh] flex flex-col">
-      <div className="flex-1 overflow-auto custom-scrollbar p-2 space-y-4 mb-4">
+      <div className="flex-1 overflow-auto custom-scrollbar p-2 space-y-4 mb-4" ref={containerRef}>
+
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`p-2 rounded-xl max-w-xs ${
-              msg.sender === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-600 text-white'
+            className={`p-2 rounded-xl w-full ${
+              msg.sender === 'user' ? 'bg-blue-500 text-white ml-auto max-w-xs' : 'bg-gray-600 text-white max-w-[80%]'
             }`}
           >
-            {msg.content}
+            {msg.sender === 'ai' ? (
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                ) : (
+                  msg.content
+            )}          
           </div>
-        ))}
+            ))}
       </div>
-      <div className="flex gap-2 p-2 border border-blue-900 rounded-3xl">
+      {isTyping && (
+        <div className="p-2 rounded-xl  text-white animate-pulse">
+          Typing<span className="dot-flash">...</span>
+        </div>
+      )}
+      { uploadedParsedFileName && (
+        <div className="p-2 text-center rounded-xl  text-blue-500 ">
+          File Uploaded 🎉
+        </div>
+      )
+
+      }
+
+      <div className="flex gap-2 p-2 border border-blue-500 rounded-3xl">
         <input
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}

@@ -27,11 +27,6 @@ const handleReset = () => {
 };
 
 
-
-
-
-
-
 const handleSend = async () => {
   if (!uploadedParsedFileName) return;
 
@@ -105,7 +100,7 @@ const handleAttachClick = () => {
 
 
 return (
-  <div className="bg-[#111] bg-opacity-40 backdrop-blur-md rounded-lg shadow-lg border border-gray-700 p-4">
+  <div className="bg-[#111] bg-opacity-40 backdrop-blur-md rounded-lg shadow-lg hover:shadow-[0_0_10px_rgba(90,175,255,0.4)] border border-gray-700 p-4">
     {/* UPLOAD AREA */}
     {quizzes.length === 0 && !isGenerating && (
       <div>

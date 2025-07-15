@@ -36,7 +36,7 @@ const Header = () => {
                     ) : (
                             <div className="flex space-x-3">
                                 <button
-                                    onClick={() => navigate('/signUp')}
+                                    onClick={() => navigate('/signIn')}
                                     className="px-4 py-1 rounded-lg bg-gray-800 text-white hover:bg-blue-600 transition-colors font-semibold"
                                 >
                                     Login

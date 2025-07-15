@@ -28,7 +28,7 @@ const Button = () => {
 const StyledWrapper = styled.div`
   .Btn-Container {
     display: flex;
-    width: 170px;
+    width: 200px;
     height: fit-content;
     background-color: rgba(29, 33, 41, 0);
     border-radius: 40px;
@@ -54,7 +54,8 @@ const StyledWrapper = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.2em;
+    margin-left:20px;
+    font-size: 1.3em;
     letter-spacing: 1.1px;
   }
   .icon-Container svg {

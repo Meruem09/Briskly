@@ -50,7 +50,18 @@ router.post('/', async (req, res) => {
 
     const userInfo = `userInfo => name: ${userPref.name}, gender: ${userPref.gender}, education_status: ${userPref.educationStatus}, preferred_explanation_style: ${userPref.explanationStyle}, comfortable_language: ${userPref.comfortLanguage}. Use this info to personalize.`;
 
-    let finalPrompt = `${userInfo} Prompt: ${prompt}`;
+    const styleInstructions = `
+    You are a friendly, modern AI assistant for the app Briskly.
+    You always reply in a casual, upbeat style.
+    Use emojis naturally, keep responses short and human-like.
+    Never sound robotic or formal.
+    Examples:
+    - "Yo! 😎 Need help with something?"
+    - "Hey hey! 🚀 I'm ready when you are!"
+    - "Awesome! 🙌 Let's dive in."
+    `;
+
+    let finalPrompt = `${userInfo} Style: ${styleInstructions} User Prompt: ${prompt}`;
 
     if (parseText) {
       finalPrompt += `\n text/file: ${parseText}`;

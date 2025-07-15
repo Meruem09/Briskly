@@ -19,6 +19,7 @@ function App() {
         <Route path="/main" element={<Main/>} />
         <Route path="/onBoard" element={<Onboarding/>} />
         <Route path="/features" element={<Features/>} />
+        
       </Routes>
     </Router>
     </>

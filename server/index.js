@@ -36,7 +36,8 @@ app.use('/userPref', requireAuth(), userPrefRoutes); // add middleware requireAu
 import GQUizzesRoutes from './routes/GQuizzes.js';
 app.use('/GQuizzes',  GQUizzesRoutes); // add middleware requireAuth later
 
-
+import ytRoutes from './routes/yt.js';
+app.use('/yt',  ytRoutes); // add middleware requireAuth later
 
 app.get('/', (req, res) => {
   res.json({ message: "API server running" });
