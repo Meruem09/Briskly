@@ -6,7 +6,7 @@ import { requireAuth } from '@clerk/express';
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = 3000;
+const PORT = process.env.VITE_APP_BE_BASEURL || 3000;
 app.use(express.json());
 app.use(urlencoded({extended:true}));
 app.use(cors({
