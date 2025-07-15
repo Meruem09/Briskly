@@ -125,11 +125,9 @@ const LandingPage = () => {
           </p>
         </div>
         {/* Get Started Button */}
-        <button className="bg-transparent" onClick={() => navigate('/main')}>
           <Button
           className="bg-transparent"
           />
-        </button>
       </div>
     </div>
   );

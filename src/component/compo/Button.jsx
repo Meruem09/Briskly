@@ -1,10 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+
 const Button = () => {
+
+  const navigate = useNavigate();
   return (
     <StyledWrapper>
-      <button className="Btn-Container bg-transparent">
+      <button className="Btn-Container bg-transparent" onClick={() => navigate('/main')}>
         <span className="text bg-transparent">let's go!</span>
         <span className="icon-Container bg-transparent">
           <svg width={16} className='bg-transparent' height={19} viewBox="0 0 16 19" fill="nones" xmlns="http://www.w3.org/2000/svg">

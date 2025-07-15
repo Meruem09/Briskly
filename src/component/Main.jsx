@@ -1,13 +1,14 @@
 // src/pages/Main.jsx
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/clerk-react";
-import axios from "axios";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import ChatWindow from "./ChatWindow";
 import Split from "react-split";
 import Content from "./Content";
 import Quizzes from "./Quizzes";
 import Notes from "./Notes";
 import Header from "./Header";
+import { useNavigate } from "react-router-dom";
+
 
 const tabs = [
   { name: "Content", Component: <Content /> },
@@ -16,16 +17,20 @@ const tabs = [
 ];
 
 const Main = () => {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const {user, isLoaded } = useUser();
   const [activeTab, setActiveTab] = useState("Quizzes");
+  const {isSignedIn} = useAuth();
+  const navigate = useNavigate()
 
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
 
-  if (!isSignedIn) {
-    return <div>Please sign in to access this page.</div>;
+  useEffect(() => {
+      if (!isSignedIn) {
+    navigate('/signUp')
   }
+  }, [])
 
   return (
     <div className="bg-[url('/bg3.svg')] bg-no-repeat bg-cover">
