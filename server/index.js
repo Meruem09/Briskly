@@ -6,11 +6,11 @@ import { requireAuth } from '@clerk/express';
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.use(express.json());
 app.use(urlencoded({extended:true}));
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: `${process.env.VITE_FE_URL}`,
     credentials: true
 }));
 
@@ -45,5 +45,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on ${process.env.VITE_APP_BE_BASEURL}`);
+  console.log(`Server is running on PORT:${PORT}`);
 });
