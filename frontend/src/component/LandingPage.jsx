@@ -73,6 +73,9 @@ const LandingPage = () => {
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []); // Empty dependency array ensures this runs once on mount
+   
+  console.log("✅ BE BASE URL:", import.meta.env.VITE_APP_BE_BASEURL);
+
 
   return (
     <div className="bg-transparent" style={{ backgroundImage: `url('/bg.svg')` }}>
