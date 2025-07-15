@@ -44,10 +44,6 @@ const mappedFormData = {
 
   const navigate_to = useNavigate();
   
-  const handleMain = () => {
-    navigate_to('/main');
-  }
-
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -58,7 +54,7 @@ const mappedFormData = {
     } else {
       try{
         const token = await getToken();
-        const res = await fetch("http://localhost:3000/userPref", {
+        const res = await fetch(`${import.meta.env.VITE_APP_BE_BASEURL}/userPref`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`},
           body: JSON.stringify(mappedFormData),

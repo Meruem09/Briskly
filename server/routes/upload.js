@@ -62,6 +62,3 @@ if (originalName.endsWith('.pdf')) {
   }});
 
 export default router;
-
-// remove below line at time of deployment
-// curl -X POST http://localhost:3000/upload \  -F "file=@C:\Users\rosha\Downloads\140001.pdf"  

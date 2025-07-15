@@ -21,11 +21,6 @@ const LandingPage = () => {
     }
   }, [])
 
-
-
-
-
-
   useGSAP(() => {
     let index = 0;
 

@@ -22,15 +22,15 @@ const Main = () => {
   const {isSignedIn} = useAuth();
   const navigate = useNavigate()
 
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
-
   useEffect(() => {
       if (!isSignedIn) {
     navigate('/signUp')
   }
   }, [])
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-[url('/bg3.svg')] bg-no-repeat bg-cover">

@@ -1,7 +1,7 @@
 import express from "express"
 import {GoogleGenerativeAI} from "@google/generative-ai"
 import { PrismaClient } from "@prisma/client"
-import dotenv from "dotenv"
+import dotenv from "dotenv" 
 import fs from 'fs'
 import path from "path"
 

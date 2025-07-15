@@ -32,7 +32,7 @@ export default function ChatWindow() {
           await loadMessages(Number(storedChatId), token);
         } else {
           // Fetch existing chats
-          const res = await axios.get('http://localhost:3000/chats/getChat', {
+          const res = await axios.get(`${import.meta.env.VITE_APP_BE_BASEURL}/chats/getChat`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -50,7 +50,7 @@ export default function ChatWindow() {
           } else {
             // Create new chat
             const res = await axios.post(
-              'http://localhost:3000/chats',
+              `${import.meta.env.VITE_APP_BE_BASEURL}/chats`,
               {},
               {
                 headers: {
@@ -90,7 +90,7 @@ useEffect(() => {
 
   const loadMessages = async (id, token) => {
     try {
-      const response = await axios.get(`http://localhost:3000/messages/${id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_APP_BE_BASEURL}/messages/${id}`, {  
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
@@ -112,7 +112,7 @@ useEffect(() => {
       setIsTyping(true);
       const token = await getToken();
       const res = await axios.post(
-        'http://localhost:3000/gemini',
+        `${import.meta.env.VITE_APP_BE_BASEURL}/gemini`,
         {
           chatId,
           prompt,
@@ -155,7 +155,7 @@ useEffect(() => {
 
     try {
       const token = await getToken();
-      const res = await axios.post('http://localhost:3000/upload', formData, {
+      const res = await axios.post(`${import.meta.env.VITE_APP_BE_BASEURL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

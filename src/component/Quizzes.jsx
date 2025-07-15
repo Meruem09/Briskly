@@ -33,7 +33,7 @@ const handleSend = async () => {
   try {
     setIsGenerating(true);
     const token = await getToken()
-    const res = await axios.post("http://localhost:3000/GQuizzes", {
+    const res = await axios.post(`${import.meta.env.VITE_APP_BE_BASEURL}/GQuizzes`, {
       parsedFileName: uploadedParsedFileName,
     }, {
       headers: {
@@ -68,7 +68,7 @@ const handleFileChange = async (e) => {
 
   try {
     const token = await getToken();
-    const res = await axios.post("http://localhost:3000/upload", formData, {
+    const res = await axios.post(`${import.meta.env.VITE_APP_BE_BASEURL}/upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,

@@ -87,7 +87,7 @@ const createUserInDatabase = async (token, clerkId, userData) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/user",
+      `${import.meta.env.VITE_APP_BE_BASEURL}/user`,
       { clerkId, ...userData },
       {
         headers: {

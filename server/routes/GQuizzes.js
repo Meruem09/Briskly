@@ -1,12 +1,10 @@
 import express from "express"
 import {GoogleGenerativeAI} from "@google/generative-ai"
-import dotenv from "dotenv"
 import fs from 'fs'
 import path from "path"
 import { extractJSON } from "../utils/extractJSON.js"
 
 const router = express.Router()
-dotenv.config();
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
 
 router.post('/', async (req, res) => {
