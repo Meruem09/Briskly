@@ -11,7 +11,7 @@ const router = express.Router();
 // Initialize upload
 const upload = multer({
   dest: 'C:/BRISKLY/briskly/server/uploads',
-  limits: { fileSize: 5000000 } // Limit file size to 5MB
+  limits: { fileSize: 10000000 } // Limit file size to 5MB
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
