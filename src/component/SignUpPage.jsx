@@ -170,7 +170,7 @@ const handleVerify = async () => {
     
     <div className="min-h-screen flex items-center justify-center bg-[url('/bg2.svg')] bg-no-repeat bg-cover text-white">
       <div className="w-full max-w-md bg-black/40 backdrop-blur-lg p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold mb-1">Welcome to IntellectUP</h2>
+        <h2 className="text-2xl font-bold mb-1">Welcome to Briskly ✨</h2>
         <br />
 
         <form onSubmit={handleSignUp} className="space-y-4">
