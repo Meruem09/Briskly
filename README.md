@@ -46,11 +46,11 @@ Briskly is your ultimate companion for last-minute learning. Powered by AI, it o
 
 ## 📸 Screenshots
 
-![App Screenshot](.frontend/src/component/assets/landingPage.png)
+![App Screenshot](./frontend/src/component/assets/landingPage.png)
 
-![App Screenshot](.frontend/src/component/assets/content.png)
+![App Screenshot](./frontend/src/component/assets/content.png)
 
-![App Screenshot](.frontend/src/component/assets/signUp.png)
+![App Screenshot](./frontend/src/component/assets/signUp.png)
 
 ---
 
