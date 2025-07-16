@@ -1,7 +1,6 @@
 export function extractJSON(str) {
   if (!str) return null;
 
-  // Remove ```json or ``` if they exist
   const clean = str.replace(/```json|```/gi, '').trim();
 
   const firstBracket = clean.indexOf('[');

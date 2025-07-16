@@ -133,12 +133,12 @@ const handleVerify = async () => {
       const token = await getToken();
       const clerkId = result.createdUserId;
 
-      //remove below line at time of deploy.
+      
       if (!token || !clerkId) {
         throw new Error("Session was set but no token or user ID found.");
       }
 
-      // Send to your backend
+      // Send user to backend
       await createUserInDatabase(token, clerkId, {
         username,
         email: emailAddress,

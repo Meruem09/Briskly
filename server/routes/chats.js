@@ -5,7 +5,7 @@ import findOrCreateUser from '../utils/middleware.js';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Create a new chat for a user
+// new chat for a user
 router.post('/', async (req, res) => {
   const clerkUserId = req.auth.userId;
 
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
     const newChat = await prisma.chat.create({
       data: {
-        userId: user.id, // 🔗 link to our DB user
+        userId: user.id,
       },
     });
 
@@ -29,9 +29,9 @@ router.post('/', async (req, res) => {
   }
 });
 
-
+// fetch chat 
 router.get('/getChat', async (req, res) => {
-  const { userId } = req.auth; // or however you extract Clerk ID
+  const { userId } = req.auth; // 
 
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });

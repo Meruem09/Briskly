@@ -19,25 +19,25 @@ import userRoutes from './routes/user.js';
 app.use('/user', requireAuth(), userRoutes);
 
 import uploadRoutes from './routes/upload.js';
-app.use('/upload', uploadRoutes); // add middleware requireAuth later
+app.use('/upload', uploadRoutes); 
 
 import geminiRoutes from './routes/gemini.js';
-app.use('/gemini',requireAuth(), geminiRoutes); // add middleware requireAuth later
+app.use('/gemini',requireAuth(), geminiRoutes); 
 
 import chatRoutes from './routes/chats.js';
-app.use('/chats',requireAuth(), chatRoutes); // add middleware requireAuth later
+app.use('/chats',requireAuth(), chatRoutes); 
 
 import messageRoutes from './routes/messages.js';
-app.use('/messages',requireAuth(), messageRoutes); // add middleware requireAuth later
+app.use('/messages',requireAuth(), messageRoutes); 
 
 import userPrefRoutes from './routes/userPref.js';
-app.use('/userPref', requireAuth(), userPrefRoutes); // add middleware requireAuth later
+app.use('/userPref', requireAuth(), userPrefRoutes); 
 
 import GQUizzesRoutes from './routes/GQuizzes.js';
-app.use('/GQuizzes',  GQUizzesRoutes); // add middleware requireAuth later
+app.use('/GQuizzes',  GQUizzesRoutes); 
 
 import ytRoutes from './routes/yt.js';
-app.use('/yt',  ytRoutes); // add middleware requireAuth later
+app.use('/yt',  ytRoutes); 
 
 app.get('/', (req, res) => {
   res.json({ message: "API server running" });

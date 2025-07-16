@@ -9,13 +9,11 @@ const prisma = new PrismaClient();
 const router = express.Router()
 dotenv.config();
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
-
+// gemini res request
 router.post('/', async (req, res) => {
   try {
     const { chatId, prompt, parsedFileName } = req.body;
 
-    // If you have Clerk JWT middleware, get clerkId from auth
-    // Or add your own decode here
     const clerkId = req.auth?.userId;
     if (!clerkId) {
       return res.status(401).json({ error: "Unauthorized" });

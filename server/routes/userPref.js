@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const router = expresss.Router();
-
+// upload userPrefernce to DB
 router.post('/', async(req, res) => {
     try{
         const {name, gender, educationStatus, explanation, language} = req.body;

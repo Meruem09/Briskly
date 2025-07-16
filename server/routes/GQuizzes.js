@@ -6,7 +6,7 @@ import { extractJSON } from "../utils/extractJSON.js"
 
 const router = express.Router()
 const genAi = new GoogleGenerativeAI(process.env.API_KEY);
-
+// generate quizzes 
 router.post('/', async (req, res) => {
   try {
     const { parsedFileName } = req.body;

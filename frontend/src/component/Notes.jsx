@@ -12,10 +12,10 @@ const Notes = () => {
     }
   }, []); // Empty dependency array to run only on mount
 
-  // Save notes to localStorage when userText changes
+  // Save notes to localStorage 
   useEffect(() => {
     localStorage.setItem('notes', userText);
-  }, [userText]); // Run whenever userText changes
+  }, [userText]); 
 
   const handleNotionToggle = () => {
     window.open("https://www.notion.com/");

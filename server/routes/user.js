@@ -5,7 +5,7 @@ const router = express.Router();
 
 // POST /users — Create or find user (called after Clerk signup)
 router.post('/', async (req, res) => {
-  // Use req.auth() as a function per Clerk's new API
+
   const auth = typeof req.auth === 'function' ? req.auth() : req.auth;
   console.log("AUTH:", auth);
   const clerkUserId = auth?.userId;

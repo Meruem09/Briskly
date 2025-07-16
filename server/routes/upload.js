@@ -13,7 +13,7 @@ const upload = multer({
   dest: path.join(process.cwd(), 'uploads'),
   limits: { fileSize: 10000000 } // Limit file size to 5MB
 });
-
+// upload files
 router.post('/', upload.single('file'), async (req, res) => {
 try {
     if(!req.file){

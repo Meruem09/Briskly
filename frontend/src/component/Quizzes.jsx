@@ -9,8 +9,7 @@ const [uploadedParsedFileName, setUploadedParsedFileName] = useState("");
 const [isUploading ,setIsUploading] = useState(false);
 const [uploadProgress ,setUploadProgress] = useState(0);
 const [isGenerating, setIsGenerating] = useState(false);
-const [quizzes, setQuizzes] = useState([]); // parsed quizzes
-const { getToken } = useAuth();
+const [quizzes, setQuizzes] = useState([]);
 const fileInputRef = useRef(null);
 
 useEffect(() => {
@@ -44,7 +43,7 @@ const handleSend = async () => {
 
     console.log('Gemini response:', res.data);
 
-    // ✅ Assume your Gemini returns a JSON string, parse it
+  
     const parsed = JSON.parse(res.data.answer);
     setQuizzes(parsed);
     localStorage.setItem('quizzes', JSON.stringify(parsed));
