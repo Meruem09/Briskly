@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     const uploadDir = path.join(process.cwd(), 'uploads');
 
     if (parsedFileName) {
-      const parsedFilePath = path.join(uploadDir, parsedFileName);
+       parsedFilePath = path.join(uploadDir, parsedFileName);
       if (fs.existsSync(parsedFilePath)) {
         parseText = fs.readFileSync(parsedFilePath, 'utf-8');
       } else {

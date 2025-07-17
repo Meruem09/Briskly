@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
     const uploadDir = path.join(process.cwd(), 'uploads');
     
     if (parsedFileName) {
-      const parsedFilePath = path.join(uploadDir, parsedFileName);
+       parsedFilePath = path.join(uploadDir, parsedFileName);
       if (fs.existsSync(parsedFilePath)) {
         parseText = fs.readFileSync(parsedFilePath, 'utf-8');
       } else {
@@ -54,13 +54,15 @@ Text:${parseText}
 
     const extractedJSON = extractJSON(ans);
 
+    if (parsedFilePath && fs.existsSync(parsedFilePath)) {
+      fs.unlinkSync(parsedFilePath);
+    }
+
+
     if (!extractedJSON) {
       return res.status(500).json({ error: 'Could not extract JSON from Gemini response.' });
     }
 
-      if (parsedFilePath && fs.existsSync(parsedFilePath)) {
-        fs.unlinkSync(parsedFilePath);
-      }
 
 
     res.json({ answer: extractedJSON });

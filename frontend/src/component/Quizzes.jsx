@@ -11,6 +11,7 @@ const [uploadProgress ,setUploadProgress] = useState(0);
 const [isGenerating, setIsGenerating] = useState(false);
 const [quizzes, setQuizzes] = useState([]);
 const fileInputRef = useRef(null);
+const {getToken} = useAuth()
 
 useEffect(() => {
   const stored = localStorage.getItem('quizzes');
