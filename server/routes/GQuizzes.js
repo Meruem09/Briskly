@@ -5,13 +5,50 @@ import path from "path"
 import { extractJSON } from "../utils/extractJSON.js"
 
 const router = express.Router()
-const genAi = new GoogleGenerativeAI(process.env.API_KEY);
+const rawKeys = process.env.GEMINI_KEYS.split(',').map(k => k.trim());
+const apiKeys = rawKeys.map(key => ({ key, active: true }));
+
+async function generateWithFallback(prompt) {
+  for (const apiKeyObj of apiKeys) {
+    if (!apiKeyObj.active) continue;
+
+    try {
+      const genAI = new GoogleGenerativeAI(apiKeyObj.key);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+
+      const result = await model.generateContent([{ text: prompt }]);
+      const ans = result.response.text();
+
+      return ans; // return if success
+    } catch (err) {
+      console.error(`Api_Key failed:`, err.message);
+
+      // Check if it's a quota or usage error
+
+
+      if (
+        err.message.includes('quota') ||
+        err.message.includes('quota_exceeded') ||
+        err.message.includes('RESOURCE_EXHAUSTED')
+      ) {
+        apiKeyObj.active = false; // deactivate key temporarily
+      }
+      else {
+        throw err; // something else went wrong — throw it
+      }
+    }
+  }
+
+  throw new Error("All API keys failed or exhausted");
+}
+
+
+
 // generate quizzes 
 router.post('/', async (req, res) => {
   try {
     const { parsedFileName } = req.body;
 
-    const model = genAi.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
     let parseText = "";
     let parsedFilePath = "";
@@ -40,8 +77,7 @@ Output only valid JSON like this:
 Text:${parseText}
 `;
 
-    const result = await model.generateContent([{ text: finalPrompt }]);
-    let ans = result.response.text();
+    let ans = await generateWithFallback(finalPrompt);
 
     if (ans.startsWith("```")) {
      ans = ans.replace(/```json|```/g, '').trim();
