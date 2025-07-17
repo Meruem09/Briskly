@@ -8,7 +8,45 @@ import path from "path"
 const prisma = new PrismaClient();
 const router = express.Router()
 dotenv.config();
-const genAi = new GoogleGenerativeAI(process.env.API_KEY);
+
+const rawKeys = process.env.GEMINI_KEYS.split(',').map(k => k.trim());
+const apiKeys = rawKeys.map(key => ({ key, active: true }));
+
+
+// api rotation function
+async function generateWithFallback(prompt) {
+  for (const apiKeyObj of apiKeys) {
+    if (!apiKeyObj.active) continue;
+
+    try {
+      const genAI = new GoogleGenerativeAI(apiKeyObj.key);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+
+      const result = await model.generateContent([{ text: prompt }]);
+      const ans = result.response.text();
+
+      return ans; // return if success
+    } catch (err) {
+      console.error(`Api_Key failed:`, err.message);
+
+      // Check if it's a quota or usage error
+
+
+      if (
+        err.message.includes('quota') ||
+        err.message.includes('quota_exceeded') ||
+        err.message.includes('RESOURCE_EXHAUSTED')
+      ) {
+        apiKeyObj.active = false; // deactivate key temporarily
+      }
+      else {
+        throw err; // something else went wrong — throw it
+      }
+    }
+  }
+
+  throw new Error("All API keys failed or exhausted");
+}
 // gemini res request
 router.post('/', async (req, res) => {
   try {
@@ -32,7 +70,6 @@ router.post('/', async (req, res) => {
       where: { userClerkId: clerkId }
     });
 
-    const model = genAi.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
     let parseText = "";
     let parsedFilePath = "";
@@ -67,8 +104,8 @@ router.post('/', async (req, res) => {
       finalPrompt += `\n text/file: ${parseText}`;
     }
 
-    const result = await model.generateContent([{ text: finalPrompt }]);
-    const ans = result.response.text();
+    const ans = await generateWithFallback(finalPrompt)
+ 
 
     console.log('Gemini answer:', ans);
 

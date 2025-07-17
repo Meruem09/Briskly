@@ -35,7 +35,7 @@ const handleSend = async () => {
     const token = await getToken()
     const res = await axios.post(`${import.meta.env.VITE_APP_BE_BASEURL}/GQuizzes`, {
       parsedFileName: uploadedParsedFileName,
-    }, {
+  }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
