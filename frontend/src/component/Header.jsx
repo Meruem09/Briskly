@@ -22,9 +22,9 @@ const Header = () => {
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8 text-gray-300 font-medium">
                 <a onClick={() => navigate('/')} className="hover:text-blue-400 transition-colors">Home</a>
-                <a onClick={() => navigate('/features')} className="hover:text-blue-400 transition-colors">Features</a>
-                <a href="#" className="hover:text-blue-400 transition-colors">How it works</a>
-                <a href="#" className="hover:text-blue-400 transition-colors">About</a>
+                <a  className="hover:text-blue-400 transition-colors">Features</a>
+                <a  className="hover:text-blue-400 transition-colors">How it works</a>
+                <a  className="hover:text-blue-400 transition-colors">About</a>
             </nav>
 
             {/* Auth Buttons */}
